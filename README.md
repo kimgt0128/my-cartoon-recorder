@@ -1,10 +1,10 @@
-# Homework #2: Cartoon Rendering
+## 개요
 
 본 프로젝트는 OpenCV를 활용하여 실시간 웹캠 영상을 만화 스타일(Cartoon Rendering)로 변환하고 사진으로 저장하는 프로그램입니다. 
 
 초기 버전의 단순한 필터링 조합에서 시작하여, 지브리 애니메이션(Ghibli Style), 그리고 완전한 셀 애니메이션(Cell Animation) 스타일로 발전시키는 과정을 담고 있습니다. 각 버전별로 발생한 문제점을 분석하고, 이를 해결하기 위해 적용한 알고리즘과 파라미터 튜닝 과정을 상세히 기록하였습니다.
 
----
+
 
 ## 1. V1: 기본 카툰 렌더링 (Basic Cartoon Effect)
 
@@ -22,7 +22,7 @@
 ![V1 Result](./v1/result/cartoon_result_1.jpg)
 *(경로명은 실제 저장된 이미지 파일명에 맞게 수정해주세요)*
 
----
+
 
 ## 2. V2: 지브리 스타일 렌더링 (Ghibli Style Effect)
 
@@ -50,7 +50,7 @@
 * **윤곽선 필터링 강화 (`GAUSSIAN_C`):** * 흑백 이미지에 `cv2.bilateralFilter`를 선행 적용하여 진짜 테두리만 남기고 잔주름을 녹여 잡선을 억제했습니다.
     * `cv2.adaptiveThreshold`에 `GAUSSIAN_C`를 적용하고, 블록 크기(13)와 보정 상수(2)를 조절하여 얼굴 윤곽이나 물체의 테두리를 굵고 뚜렷하게 그려내도록 튜닝했습니다.
 
-![V3 Result](./v2/result/anime_result_1.jpg)
+![V3 Result](./v3/result/anime_result_1.jpg)
 
 ---
 

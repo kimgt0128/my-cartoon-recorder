@@ -1,0 +1,85 @@
+import cv2
+import numpy as np
+import os
+
+def apply_cartoon_effect(img):
+    """
+    원본 이미지에 기본 카툰 렌더링 효과를 적용합니다.
+    """
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    gray = cv2.medianBlur(gray, 5)
+
+    edges = cv2.adaptiveThreshold(
+        gray, 255, 
+        cv2.ADAPTIVE_THRESH_MEAN_C, 
+        cv2.THRESH_BINARY, 
+        9, 9
+    )
+
+    color = img.copy()
+    for _ in range(3): 
+        color = cv2.bilateralFilter(color, 9, 300, 300)
+
+    cartoon = cv2.bitwise_and(color, color, mask=edges)
+    return cartoon
+
+def main():
+    # ---------------------------------------------------------
+    # [경로 자동 추적: v1 폴더 기준]
+    # 현재 스크립트가 있는 폴더(v1)를 찾고 그 안에 result 폴더 지정
+    # ---------------------------------------------------------
+    current_file_path = os.path.abspath(__file__)
+    script_dir = os.path.dirname(current_file_path) # v1 폴더 경로
+    save_dir = os.path.join(script_dir, "result")   # v1/result
+    
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    cap = cv2.VideoCapture(0)
+
+    if not cap.isOpened():
+        print("웹캠을 열 수 없습니다.")
+        return
+
+    print("=====================================")
+    print(" 카툰 사진 촬영기 (v1) 실행!")
+    print(f" - 저장 위치: {save_dir}")
+    print(" - [Space] 또는 [c] 키: 사진 촬영")
+    print(" - [ESC] 또는 [q] 키: 프로그램 종료")
+    print("=====================================")
+
+    capture_count = 0
+
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        cv2.imshow('Live Webcam', frame)
+        key = cv2.waitKey(1) & 0xFF
+
+        if key == ord('q') or key == 27:
+            print("프로그램을 종료합니다.")
+            break
+        
+        elif key == ord('c') or key == 32:
+            print("사진 촬영 중...")
+            
+            flash_frame = np.full(frame.shape, 255, dtype=np.uint8)
+            cv2.imshow('Live Webcam', flash_frame)
+            cv2.waitKey(100) 
+            
+            cartoon_img = apply_cartoon_effect(frame)
+            
+            capture_count += 1
+            filename = os.path.join(save_dir, f"cartoon_result_{capture_count}.jpg")
+            cv2.imwrite(filename, cartoon_img)
+            
+            print(f">>> 성공적으로 저장되었습니다: {filename}")
+            cv2.imshow('Cartoon Result', cartoon_img)
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+    main()
